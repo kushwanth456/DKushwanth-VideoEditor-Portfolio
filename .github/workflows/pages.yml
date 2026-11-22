@@ -32,7 +32,12 @@ jobs:
         env:
           GITHUB_ACTIONS: 'true'
       - name: Add SPA route fallback
-        run: cp dist/index.html dist/404.html
+        run: |
+          cp dist/index.html dist/404.html
+          mkdir -p dist/work dist/admin dist/privacy
+          cp dist/index.html dist/work/index.html
+          cp dist/index.html dist/admin/index.html
+          cp dist/index.html dist/privacy/index.html
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
       - name: Upload Pages artifact
