@@ -1,0 +1,21 @@
+{
+  "name": "d-kushwanth-site",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "node server/index.js --dev",
+    "start": "node server/index.js",
+    "setup-admin": "node scripts/setup-admin.mjs",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "express": "5.1.0",
+    "lucide-react": "1.77.0",
+    "multer": "2.5.0",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "vite": "8.3.8"
+  }
+}

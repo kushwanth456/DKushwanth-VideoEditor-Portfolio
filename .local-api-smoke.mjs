@@ -1,0 +1,13 @@
+import {randomBytes,pbkdf2Sync} from 'node:crypto';
+import {mkdir,writeFile,rm} from 'node:fs/promises';
+const base='http://127.0.0.1:5173',dir=new URL('./data/',import.meta.url),email='smoke@example.test',password=randomBytes(24).toString('base64url'),salt=randomBytes(16),digest=pbkdf2Sync(password,salt,310000,32,'sha256');
+await mkdir(dir,{recursive:true});await writeFile(new URL('admin.json',dir),JSON.stringify({email,password_hash:`${salt.toString('hex')}:${digest.toString('hex')}`}));
+try{
+ let r=await fetch(`${base}/api/admin/login`,{method:'POST',headers:{Origin:base,'Content-Type':'application/json'},body:JSON.stringify({email,password})});if(!r.ok)throw Error(`login ${r.status}`);const cookie=r.headers.get('set-cookie')?.split(';')[0];if(!cookie)throw Error('session cookie missing');
+ const form=new FormData();form.set('title','Smoke upload');form.set('description','Temporary integration check');form.set('category','Reels');form.set('published','false');form.set('video',new File([new Uint8Array([0,0,0,24,102,116,121,112])],'sample.mp4',{type:'video/mp4'}));
+ r=await fetch(`${base}/api/admin/videos`,{method:'POST',headers:{Origin:base,Cookie:cookie},body:form});if(!r.ok)throw Error(`upload ${r.status}: ${await r.text()}`);const uploaded=await r.json();let denied=await fetch(`${base}/media/${uploaded.file}`);if(denied.status!==404)throw Error(`draft media was exposed: ${denied.status}`);let preview=await fetch(`${base}/media/${uploaded.file}`,{headers:{Cookie:cookie}});if(!preview.ok)throw Error(`admin preview ${preview.status}`);
+ r=await fetch(`${base}/api/admin/videos/${uploaded.id}`,{method:'PUT',headers:{Origin:base,Cookie:cookie,'Content-Type':'application/json'},body:JSON.stringify({published:true})});if(!r.ok)throw Error(`publish ${r.status}`);const pub=await (await fetch(`${base}/api/content`)).json();if(!pub.reels.some(v=>v.id===uploaded.id&&v.file))throw Error('published file missing from public feed');if(!(await fetch(`${base}/media/${uploaded.file}`)).ok)throw Error('published file not served');
+ const dropped='drop_folder_video.webm';await writeFile(new URL(`media/${dropped}`,dir),new Uint8Array([0,0,0,24,102,116,121,112]));const imported=await (await fetch(`${base}/api/content`)).json();if(!imported.reels.some(v=>v.title==='drop folder video'))throw Error('folder drop was not auto-imported');
+ r=await fetch(`${base}/api/admin/videos/${uploaded.id}`,{method:'DELETE',headers:{Origin:base,Cookie:cookie}});if(r.status!==204)throw Error(`delete ${r.status}`);
+ console.log('PASS local admin login; draft protection; upload and publish; public video playback route; automatic folder import; delete');
+}finally{await rm(dir,{recursive:true,force:true})}
