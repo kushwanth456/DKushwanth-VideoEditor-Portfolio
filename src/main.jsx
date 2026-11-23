@@ -9,7 +9,7 @@ import './motion.css';
 const HERO_ROLES=['VIDEO EDITOR','VISUAL STORYTELLER','SHORT-FORM & FILM EDITOR'];
 const VIDEO_CATEGORIES=['Instagram Reels','YouTube Shorts','Long-form Video','Brand Edits','Wedding Edits','Other'];
 const SITE_BASE=import.meta.env.BASE_URL;
-const STATIC_PAGES=SITE_BASE!=='/';
+const STATIC_PAGES=import.meta.env.MODE==='static'||SITE_BASE!=='/';
 const sitePath=(path='/')=>`${SITE_BASE}${path.replace(/^\/+/, '')}`;
 const pagePath=location.pathname.startsWith(SITE_BASE)?`/${location.pathname.slice(SITE_BASE.length).replace(/^\/+/, '')}`.replace(/\/$/,'')||'/':location.pathname.replace(/\/$/,'')||'/';
 const assetPath=(path='')=>STATIC_PAGES&&path.startsWith('/')?sitePath(path):path;
