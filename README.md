@@ -45,7 +45,7 @@ GitHub Pages serves static files only. It cannot run the local Express server, s
 ### Add videos and favorites
 
 1. Put MP4, WebM, MOV, or M4V clips in `public/videos/` to show them on the complete `/work` page.
-2. Put selected clips in `public/favorites/` to include them in the homepage's continuously scrolling **My work** strip. A favorite also appears on `/work`; it does not need a duplicate in `videos/`.
+2. Put selected clips in `public/favorites/` to choose the homepage's continuously scrolling **My work** strip. Until you add favorites, the homepage shows all videos from `videos/`. A favorite also appears on `/work`; it does not need a duplicate in `videos/`.
 3. The filename becomes the displayed title. No title or description entry is required. The build scans the folders when you start `npm run dev:static` or when GitHub Actions builds the site.
 
 Video files in these folders default to the `Other` category and 9:16 cards. YouTube and Instagram links can still be added as entries in the `projects` array in `public/site-content.json`; YouTube thumbnails are derived from the video link.
