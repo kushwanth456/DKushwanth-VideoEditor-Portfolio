@@ -38,31 +38,18 @@ This local version supports homepage/contact settings, category-managed YouTube/
 
 This repository deploys a static portfolio through GitHub Actions. After each source push to `main`, the workflow builds the Vite app and publishes `dist` to GitHub Pages. In the repository, open **Settings → Pages** and choose **GitHub Actions** as the publishing source.
 
-The public copy reads `public/site-content.json` and `public/media/`. Edit that JSON and add appropriately licensed public images/videos there, then push the changes to update the site. The included profile image and public social links are safe-to-publish site content. Do not put passwords, `data/admin.json`, private submissions, or secret keys in `public/`.
+The public copy reads `public/site-content.json`, `public/videos/`, and `public/favorites/`. The included profile image and public social links are safe-to-publish site content. Do not put passwords, `data/admin.json`, private submissions, or secret keys in `public/`.
 
-GitHub Pages serves static files only. It cannot run the local Express server, so `/admin` is a read-only notice, the contact section sends visitors to Instagram, and videos stored only in `data/videos` stay local. The complete portfolio reads public entries from `public/site-content.json`.
+GitHub Pages serves static files only. It cannot run the local Express server, so `/admin` is a read-only notice and the contact section sends visitors to Instagram. The Actions build scans the two public video folders and generates the project list automatically.
 
-### Add work manually
+### Add videos and favorites
 
-1. For a directly hosted clip, put a compressed MP4 or WebM in `public/videos/`.
-2. Add an entry to the `projects` array in `public/site-content.json`:
+1. Put MP4, WebM, MOV, or M4V clips in `public/videos/` to show them on the complete `/work` page.
+2. Put selected clips in `public/favorites/` to include them in the homepage's continuously scrolling **My work** strip. A favorite also appears on `/work`; it does not need a duplicate in `videos/`.
+3. The filename becomes the displayed title. No title or description entry is required. The build scans the folders when you start `npm run dev:static` or when GitHub Actions builds the site.
 
-```json
-{
-  "id": "my-short-01",
-  "title": "My short edit",
-  "description": "A short description",
-  "category": "YouTube Shorts",
-  "source": "static-file",
-  "url": "/videos/my-short.mp4",
-  "aspect_ratio": "9:16",
-  "published": true,
-  "tags": ["short-form", "edit"]
-}
-```
+Video files in these folders default to the `Other` category and 9:16 cards. YouTube and Instagram links can still be added as entries in the `projects` array in `public/site-content.json`; YouTube thumbnails are derived from the video link.
 
-For a YouTube or Instagram project, set `url` to its public link and set `category` to `YouTube Shorts`, `Instagram Reels`, `Long-form Video`, `Brand Edits`, `Wedding Edits`, or `Other`. YouTube thumbnails are derived from the video link; you may add a custom `thumbnail_url` (for example, `/media/my-cover.webp`) for Instagram or any other project. Use `aspect_ratio: "16:9"` for a landscape video; Reels and Shorts use `"9:16"`. Set `published` to `false` to hide an entry.
+Commit the video files to `main`; GitHub Actions rebuilds and republishes the site. GitHub blocks regular repository files larger than 100 MiB, and published Pages sites are limited to 1 GB total, so compress large clips or use YouTube/Instagram links. [GitHub file limits](https://docs.github.com/en/repositories/working-with-files/managing-large-files/about-large-files-on-github) · [Pages limits](https://docs.github.com/en/pages/getting-started-with-github-pages/github-pages-limits).
 
-Commit the video and JSON changes to `main`; GitHub Actions rebuilds the site. GitHub blocks regular repository files larger than 100 MiB, and published Pages sites are limited to 1 GB total. The videos currently in the local `data/videos` folder are not copied automatically; compress clips under those limits or link to YouTube/Instagram. [GitHub file limits](https://docs.github.com/en/repositories/working-with-files/managing-large-files/about-large-files-on-github) · [Pages limits](https://docs.github.com/en/pages/getting-started-with-github-pages/github-pages-limits).
-
-The local admin and its folder-based video workflow continue to run with `npm run dev` on your computer. Changes made there do not update the static GitHub site; update `public/site-content.json` and push them manually.
+The local admin and its original folder-based workflow continue to run with `npm run dev`. For a static preview that uses the new folders, run `npm run dev:static`. Adding a file to either public folder requires pushing that file to GitHub for the online site to update.

@@ -8,9 +8,11 @@
     "start": "node server/index.js",
     "setup-admin": "node scripts/setup-admin.mjs",
     "build": "vite build",
+    "predev:static": "node scripts/generate-static-site-content.mjs",
+    "prebuild:static": "node scripts/generate-static-site-content.mjs",
     "preview": "vite preview",
     "dev:static": "vite --mode static --host 127.0.0.1 --port 4173",
-    "build:static": "vite build --mode static --base /"
+    "build:static": "vite build --mode static"
   },
   "dependencies": {
     "express": "5.1.0",

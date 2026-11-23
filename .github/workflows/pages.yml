@@ -28,9 +28,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
       - name: Build Vite site
-        run: npm run build
-        env:
-          GITHUB_ACTIONS: 'true'
+        run: npm run build:static
       - name: Add SPA route fallback
         run: |
           cp dist/index.html dist/404.html
